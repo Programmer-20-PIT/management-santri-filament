@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('role')->nullable();
             $table->integer('generation')->nullable();
             $table->string('phone', 20)->nullable();
-            $table->string('entry_date')->nullable();
-            $table->string('graduate_date')->nullable();
+            $table->date('entry_date')->nullable();
+            $table->date('graduate_date')->nullable();
             $table->string('status_graduate')->nullable();
             $table->string('nisn')->nullable();
             $table->string('no_ktp')->nullable();
