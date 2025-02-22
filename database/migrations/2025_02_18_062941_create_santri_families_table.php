@@ -24,9 +24,6 @@ return new class extends Migration
             $table->string('mother_birth')->nullable();
             $table->integer('mother_phone')->nullable();
             $table->timestamps();
-
-            // Constraint foreign key
-            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -6,11 +6,13 @@ use DateTime;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
+use App\Models\Kelas;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Departement;
 use Filament\Resources\Resource;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\Layout\Split;
@@ -62,14 +64,30 @@ class UserResource extends Resource
                         }
                     })
                     ->searchable(),
-                    TextColumn::make('department.name')
-                        ->icon('heroicon-o-briefcase')
-                        ->iconColor('primary')
-                        ->searchable(),
-                    TextColumn::make('kelas.major')
-                        ->iconColor('primary')
-                        ->icon('heroicon-o-academic-cap')
-                        ->searchable(),
+                TextColumn::make('department.name')
+                    ->icon('heroicon-o-briefcase')
+                    ->iconColor('primary')
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                                $id = Departement::where('name', 'like', '%' . $search . '%')->first()->id ?? null;
+                                if($id){
+                                    return $query->where('department_id', 'like', '%' . $id . '%');
+                                }
+                            return $query;
+                        }
+                    ),
+                TextColumn::make('kelas.major')
+                    ->iconColor('primary')
+                    ->icon('heroicon-o-academic-cap')
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                            $id = Kelas::where('major', 'like', '%' . $search . '%')->first()->id ?? null;
+                            if($id){
+                                return $query->where('kelas_id', 'like', '%' . $id . '%');
+                            }
+                            return $query;
+                        }
+                    ),
 
 
                 TextColumn::make('entry_date')
@@ -77,13 +95,23 @@ class UserResource extends Resource
                     ->tooltip(function ($record) {
                         return $record->entry_date . ' -> ' . $record->graduate_date;
                     })
-                    ->getStateUsing(function($record) {
+                    ->getStateUsing(function ($record) {
                         $tanggalMasuk = new DateTime($record->entry_date);
                         $tanggalKeluar = new DateTime($record->graduate_date);
 
                         $totalBulan =
-                        $tanggalMasuk->diff($tanggalKeluar)->m +
-                        ($tanggalKeluar->format('Y') - $tanggalMasuk->format('Y')) * 12;
+                            $tanggalMasuk->diff($tanggalKeluar)->m +
+                            ($tanggalKeluar->format('Y') - $tanggalMasuk->format('Y')) * 12;
+
+                        $tahun = floor($totalBulan / 12);
+                        $sisaBulan = $totalBulan % 12;
+
+                        if ($tahun > 0) {
+                            if ($sisaBulan > 0) {
+                                return $tahun . ' Tahun ' . $sisaBulan . ' Bulan';
+                            }
+                            return $tahun . ' Tahun';
+                        }
 
                         return $totalBulan . ' Bulan';
                     })
@@ -105,7 +133,7 @@ class UserResource extends Resource
 
             ->defaultSort(
                 fn($query) =>
-                $query->orderBy('generation', 'desc')
+                $query->orderBy('entry_date', 'desc')
             )
 
             ->paginated([
@@ -168,8 +196,24 @@ class UserResource extends Resource
                             );
                     })
             ])
+
+            ->groups([
+                Group::make('entry_date')
+                    ->label('Masa Santri')
+                    ->date()
+                    ->collapsible(),
+                Group::make('department.name')
+                    ->label('Department')
+                    ->collapsible(),
+
+            ])
+
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make()->tooltip('Edit'),
+                    Tables\Actions\ViewAction::make()->tooltip('View'),
+                    Tables\Actions\DeleteAction::make()->tooltip('Delete'),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

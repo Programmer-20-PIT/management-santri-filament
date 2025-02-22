@@ -21,9 +21,6 @@ return new class extends Migration
             $table->dateTime('date')->nullable();
             $table->timestamps();
 
-            // Foreign key constraints
-            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->foreign('subject_id')->references('id')->on('lessons')->onDelete('cascade');
         });
 
     }

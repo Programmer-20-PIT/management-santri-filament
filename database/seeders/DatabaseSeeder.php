@@ -16,6 +16,7 @@ use App\Models\SantriFamily;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\AttachmentSantri;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -24,6 +25,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::factory()->create([
+            'name' => 'EL',
+            'email' => 'ghifariakun@gmail.com',
+            'role' => 'admin',
+            'password' => Hash::make('1')
+        ]);
+
         $dataUser = User::factory(100)->create();
         $dataKelas = Kelas::factory(5)->create();
         $dataProgramStage = ProgramStage::factory(10)->create();
