@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use DateTime;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
@@ -12,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +23,6 @@ use App\Filament\Resources\UserResource\Pages;
 use phpDocumentor\Reflection\DocBlock\Tags\Since;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
-use Filament\Tables\Columns\Layout\Split;
 
 class UserResource extends Resource
 {
@@ -69,14 +70,24 @@ class UserResource extends Resource
                         ->iconColor('primary')
                         ->icon('heroicon-o-academic-cap')
                         ->searchable(),
-           
+
 
                 TextColumn::make('entry_date')
                     ->sortable()
                     ->tooltip(function ($record) {
                         return $record->entry_date . ' -> ' . $record->graduate_date;
                     })
-                    ->since()
+                    ->getStateUsing(function($record) {
+                        $tanggalMasuk = new DateTime($record->entry_date);
+                        $tanggalKeluar = new DateTime($record->graduate_date);
+
+                        $totalBulan =
+                        $tanggalMasuk->diff($tanggalKeluar)->m +
+                        ($tanggalKeluar->format('Y') - $tanggalMasuk->format('Y')) * 12;
+
+                        return $totalBulan . ' Bulan';
+                    })
+
                     ->label('Masa Santri')
                     ->icon('heroicon-o-calendar-date-range')
                     ->iconColor('primary')
