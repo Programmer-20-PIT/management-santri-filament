@@ -6,6 +6,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
+use Filament\Enums\ThemeMode;
 use Filament\Support\Colors\Color;
 use Filament\Notifications\Notification;
 use Filament\Http\Middleware\Authenticate;
@@ -88,6 +89,19 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->defaultThemeMode(ThemeMode::Dark)
+            ->spa()
+            ->sidebarWidth('15rem')
+            ->maxContentWidth('25rem')
+            ->sidebarCollapsibleOnDesktop(true)
+            ->sidebarFullyCollapsibleOnDesktop(true)
+            ->brandName('Brand.com')
+            ->brandLogo(asset('images/darklogo.png'))
+            ->darkModeBrandLogo(asset('images/lightlogo.png'))
+            ->favicon(asset('images/favicon.png'))
+            ->brandLogoHeight('2rem')
+            // ->Width
+
 
             ->plugins([
                 EmailVerificationAlertPlugin::make()
