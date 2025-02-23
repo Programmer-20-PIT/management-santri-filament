@@ -12,45 +12,45 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreign('kelas_id')->references('id')->on('kelas');
-            $table->foreign('department_id')->references('id')->on('departements');
-            $table->foreign('program_stage_id')->references('id')->on('program_stages');
+            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('set null');
+            $table->foreign('department_id')->references('id')->on('departements')->onDelete('set null');
+            $table->foreign('program_stage_id')->references('id')->on('program_stages')->onDelete('set null');
         });
 
         Schema::table('kelas', function (Blueprint $table) {
-            $table->foreign('mentor_id')->references('id')->on('users');
+            $table->foreign('mentor_id')->references('id')->on('users')->onDelete('set null');;
         });
 
         Schema::table('departements', function (Blueprint $table) {
-            $table->foreign('leader_id')->references('id')->on('users');
-            $table->foreign('co_leader_id')->references('id')->on('users');
+            $table->foreign('leader_id')->references('id')->on('users')->onDelete('set null');;
+            $table->foreign('co_leader_id')->references('id')->on('users')->onDelete('set null');;
         });
 
         Schema::table('permissions', function (Blueprint $table) {
-            $table->foreign('santri_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('santri_id')->references('id')->on('users')->onDelete('set null');
         });
 
         Schema::table('lessons', function (Blueprint $table) {
-            $table->foreign('kelas_id')->references('id')->on('kelas');
+            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
         });
 
         Schema::table('assessments', function (Blueprint $table) {
-            $table->foreign('santri_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('lesson_id')->references('id')->on('lessons')->onDelete('cascade');
+            $table->foreign('santri_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('lesson_id')->references('id')->on('lessons')->onDelete('set null');
         });
 
         Schema::table('attendences', function (Blueprint $table) {
-            $table->foreign('santri_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('activity_id')->references('id')->on('activities');
+            $table->foreign('santri_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('activity_id')->references('id')->on('activities')->onDelete('cascade');
         });
 
         Schema::table('attachment_santris', function (Blueprint $table) {
-            $table->foreign('santri_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('attachment_id')->references('id')->on('attachments');
+            $table->foreign('santri_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('attachment_id')->references('id')->on('attachments')->onDelete('cascade');
         });
 
         Schema::table('santri_families', function (Blueprint $table) {
-            $table->foreign('santri_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('santri_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

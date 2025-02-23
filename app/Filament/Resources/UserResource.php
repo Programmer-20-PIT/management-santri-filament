@@ -25,6 +25,8 @@ use App\Filament\Resources\UserResource\Pages;
 use phpDocumentor\Reflection\DocBlock\Tags\Since;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Faker\Provider\ar_EG\Text;
+use Filament\Forms\Components\TextInput;
 
 class UserResource extends Resource
 {
@@ -36,8 +38,24 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                //
-            ]);
+                TextInput::make('name')
+                    ->prefixIcon('heroicon-o-user')
+                    ->prefixIconColor('primary'),
+                TextInput::make('email'),
+                TextInput::make('gender'),
+                TextInput::make('date_of_birth'),
+                TextInput::make('phone'),
+                TextInput::make('address'),
+                TextInput::make('role'),
+                TextInput::make('generation'),
+                TextInput::make('entry_date'),
+                TextInput::make('graduate_date'),
+                TextInput::make('status_graduate'),
+                TextInput::make('kelas_id'),
+                TextInput::make('department_id'),
+                TextInput::make('program_stage_id'),
+            ])
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -65,6 +83,7 @@ class UserResource extends Resource
                     })
                     ->searchable(),
                 TextColumn::make('department.name')
+                    ->label('Amanah Departement')
                     ->icon('heroicon-o-briefcase')
                     ->iconColor('primary')
                     ->searchable(
