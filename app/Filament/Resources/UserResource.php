@@ -10,7 +10,9 @@ use App\Models\Kelas;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Departement;
+use PhpParser\Node\Expr\Cast;
 use Faker\Provider\ar_EG\Text;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Filters\Filter;
@@ -18,6 +20,7 @@ use Filament\Tables\Grouping\Group;
 use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Section;
 use App\Forms\Components\KelasIdSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
@@ -37,8 +40,7 @@ use phpDocumentor\Reflection\DocBlock\Tags\Since;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Split as ComponentsSplit;
 use App\Filament\Resources\UserResource\RelationManagers;
-use Filament\Forms\Components\Section;
-use PhpParser\Node\Expr\Cast;
+use Filament\Infolists\Components\TextEntry;
 
 class UserResource extends Resource
 {
@@ -168,7 +170,9 @@ class UserResource extends Resource
                                                 ->prefixIconColor('primary'),
 
                                             KelasIdSelect::make('kelas_id'),
+
                                             DepartmentIdSelect::make('department_id'),
+                                            
                                             ProgramStageIdSelect::make('program_stage_id'),
 
                                         ]),
@@ -412,7 +416,7 @@ class UserResource extends Resource
             )
 
             ->paginated([
-                10,
+                5,
                 20,
                 40,
                 80,
@@ -495,6 +499,13 @@ class UserResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist {
+        return $infolist
+        ->schema([
+            TextEntry::make('name'),
+        ]);
     }
 
     public static function getRelations(): array

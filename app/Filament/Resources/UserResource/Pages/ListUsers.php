@@ -16,6 +16,7 @@ class ListUsers extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Tambah Santri')
+                ->color('primary')
                 ->icon('heroicon-o-user-plus'),
         ];
     }
