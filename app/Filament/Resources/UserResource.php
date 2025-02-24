@@ -10,23 +10,32 @@ use App\Models\Kelas;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Departement;
+use Faker\Provider\ar_EG\Text;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
+use Illuminate\Support\Facades\Date;
+use Filament\Forms\Components\Select;
+use App\Forms\Components\KelasIdSelect;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TernaryFilter;
+use App\Forms\Components\DepartmentIdSelect;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Components\DateTimePicker;
 use App\Filament\Resources\UserResource\Pages;
+use App\Forms\Components\ProgramStageIdSelect;
 use phpDocumentor\Reflection\DocBlock\Tags\Since;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
-use Faker\Provider\ar_EG\Text;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Split as ComponentsSplit;
 
 class UserResource extends Resource
 {
@@ -38,24 +47,140 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->prefixIcon('heroicon-o-user')
-                    ->prefixIconColor('primary'),
-                TextInput::make('email'),
-                TextInput::make('gender'),
-                TextInput::make('date_of_birth'),
-                TextInput::make('phone'),
-                TextInput::make('address'),
-                TextInput::make('role'),
-                TextInput::make('generation'),
-                TextInput::make('entry_date'),
-                TextInput::make('graduate_date'),
-                TextInput::make('status_graduate'),
-                TextInput::make('kelas_id'),
-                TextInput::make('department_id'),
-                TextInput::make('program_stage_id'),
-            ])
-            ->columns(3);
+                Grid::make([
+                    'md' => 1,
+                    'lg' => 2,
+                    'xl' => 4,
+                ])
+                    ->schema([
+                        ToggleButtons::make('gender')
+                        ->inline()
+                        ->columnSpanFull()
+                        ->grouped()
+                        ->options([
+                            'male' => 'Laki-laki',
+                            'female' => 'Perempuan',
+                        ])
+                        ->icons([
+                            'male' => 'heroicon-o-user',
+                            'female' => 'heroicon-o-user-circle',
+                        ])
+
+                        ->colors([
+                            'male' => 'primary',
+                            'female' => 'warning',
+                        ]),
+                        TextInput::make('name')
+                            ->placeholder('Enter your Name')
+                            ->prefixIcon('heroicon-o-user')
+                            ->prefixIconColor('primary'),
+                        TextInput::make('email')
+                            ->email()
+                            ->prefixIcon('heroicon-o-envelope')
+                            ->prefixIconColor('primary'),
+                        TextInput::make('password')
+                            ->password()
+                            ->prefixIcon('heroicon-o-lock-closed')
+                            ->prefixIconColor('primary'),
+                        TextInput::make('phone')
+                            ->tel()
+                            ->prefixIcon('heroicon-o-phone')
+                            ->prefixIconColor('primary'),
+                    ]),
+
+                Grid::make([
+                    'md' => 1,
+                    'lg' => 2,
+                    'xl' => 4,
+                ])
+                    ->schema([
+
+                            TextInput::make('nisn')
+                                ->numeric()
+                                ->columnSpan(1)
+                                ->placeholder('Masukan No NISN sekolah mu')
+                                ->label('NISN')
+                                ->prefixIcon('heroicon-o-credit-card')
+                                ->prefixIconColor('primary'),
+                            TextInput::make('no_ktp')
+                                ->numeric()
+                                ->columnSpan(1)
+                                ->placeholder('Masukan No NIK KTP')
+                                ->label('NIK')
+                                ->prefixIcon('heroicon-o-credit-card')
+                                ->prefixIconColor('primary'),
+
+
+                        DatePicker::make('date_of_birth')
+                            ->date()
+                            ->placeholder('Enter your birth date')
+                            ->native(false)
+                            ->prefixIcon('heroicon-o-cake')
+                            ->prefixIconColor('primary'),
+                        Select::make('role')
+                            ->placeholder('Pilih role kamu')
+                            ->options([
+                                'Admin' => 'Admin',
+                                'Santri' => 'Santri',
+                                'Mentor' => 'Mentor',
+                                'Leader' => 'Leader',
+                            ])
+                            ->prefixIcon('heroicon-o-tag')
+                            ->prefixIconColor('primary'),
+
+                    ]),
+
+                Grid::make([
+                    'md' => 1,
+                    'lg' => 2,
+                    'xl' => 4,
+                ])
+                    ->schema([
+                        TextInput::make('generation')
+                        ->numeric()
+                        ->prefixIcon('heroicon-o-academic-cap')
+                        ->prefixIconColor('primary'),
+
+                        KelasIdSelect::make('kelas_id'),
+                        DepartmentIdSelect ::make('department_id') ,
+                        ProgramStageIdSelect::make('program_stage_id')
+                            ,
+
+                    ]),
+
+                Grid::make([
+                    'md' => 1,
+                    'lg' => 2,
+                    'xl' => 4,
+                ])
+                    ->schema([
+                        Select::make('status_graduate')
+                        ->native(false)
+                            ->options([
+                                'Lulus' => 'Lulus',
+                                'Belum Lulus' => 'Belum Lulus',
+                                'Dropout' => 'Dropout',
+
+                            ])
+                            ->prefixIcon('heroicon-o-academic-cap')
+                            ->prefixIconColor('primary'),
+
+                        DatePicker::make('entry_date')
+                            ->native(false)
+                            ->prefixIcon('heroicon-o-calendar-date-range')
+                            ->prefixIconColor('primary'),
+
+
+                        DatePicker::make('graduate_date')
+                            ->native(false)
+                            ->prefixIcon('heroicon-o-calendar-days')
+                            ->prefixIconColor('primary'),
+                        Textarea::make('address')
+                            ->columnSpan(3),
+
+                    ]),
+
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -88,10 +213,10 @@ class UserResource extends Resource
                     ->iconColor('primary')
                     ->searchable(
                         query: function (Builder $query, string $search): Builder {
-                                $id = Departement::where('name', 'like', '%' . $search . '%')->first()->id ?? null;
-                                if($id){
-                                    return $query->where('department_id', 'like', '%' . $id . '%');
-                                }
+                            $id = Departement::where('name', 'like', '%' . $search . '%')->first()->id ?? null;
+                            if ($id) {
+                                return $query->where('department_id', 'like', '%' . $id . '%');
+                            }
                             return $query;
                         }
                     ),
@@ -101,7 +226,7 @@ class UserResource extends Resource
                     ->searchable(
                         query: function (Builder $query, string $search): Builder {
                             $id = Kelas::where('major', 'like', '%' . $search . '%')->first()->id ?? null;
-                            if($id){
+                            if ($id) {
                                 return $query->where('kelas_id', 'like', '%' . $id . '%');
                             }
                             return $query;
