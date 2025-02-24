@@ -17,6 +17,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Grouping\Group;
 use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Wizard;
 use App\Forms\Components\KelasIdSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
@@ -34,8 +35,8 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Forms\Components\ProgramStageIdSelect;
 use phpDocumentor\Reflection\DocBlock\Tags\Since;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\UserResource\RelationManagers;
 use Filament\Forms\Components\Split as ComponentsSplit;
+use App\Filament\Resources\UserResource\RelationManagers;
 
 class UserResource extends Resource
 {
@@ -47,138 +48,165 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Grid::make([
-                    'md' => 1,
-                    'lg' => 2,
-                    'xl' => 4,
-                ])
-                    ->schema([
-                        ToggleButtons::make('gender')
-                        ->inline()
-                        ->columnSpanFull()
-                        ->grouped()
-                        ->options([
-                            'male' => 'Laki-laki',
-                            'female' => 'Perempuan',
-                        ])
-                        ->icons([
-                            'male' => 'heroicon-o-user',
-                            'female' => 'heroicon-o-user-circle',
-                        ])
+                Wizard::make([
+                    Wizard\Step::make('Data Santri')
+                        ->icon('heroicon-o-clipboard-document-list')
+                        ->completedIcon('heroicon-m-clipboard-document-check')
+                        ->columns(4)
+                        ->schema([
+                            Grid::make([
+                                'md' => 1,
+                                'lg' => 2,
+                                'xl' => 4,
+                            ])
+                                ->schema([
+                                    ToggleButtons::make('gender')
+                                        ->inline()
+                                        ->columnSpanFull()
+                                        ->grouped()
+                                        ->options([
+                                            'male' => 'Laki-laki',
+                                            'female' => 'Perempuan',
+                                        ])
+                                        ->icons([
+                                            'male' => 'heroicon-o-user',
+                                            'female' => 'heroicon-o-user-circle',
+                                        ])
 
-                        ->colors([
-                            'male' => 'primary',
-                            'female' => 'warning',
+                                        ->colors([
+                                            'male' => 'primary',
+                                            'female' => 'primary',
+                                        ]),
+                                    TextInput::make('name')
+                                        ->placeholder('Enter your Name')
+                                        ->required()
+                                        ->prefixIcon('heroicon-o-user')
+                                        ->prefixIconColor('primary'),
+                                    TextInput::make('email')
+                                        ->email()
+                                        ->required()
+                                        ->placeholder('Enter your Active Email')
+                                        ->prefixIcon('heroicon-o-envelope')
+                                        ->prefixIconColor('primary'),
+                                    TextInput::make('password')
+                                        ->placeholder('*****************')
+                                        ->password()
+                                        ->required()
+                                        ->prefixIcon('heroicon-o-lock-closed')
+                                        ->prefixIconColor('primary'),
+                                    TextInput::make('phone')
+                                        ->placeholder('Enter your active WA number')
+                                        ->tel()
+                                        ->prefixIcon('heroicon-o-phone')
+                                        ->prefixIconColor('primary'),
+                                ]),
+
+                            Grid::make([
+                                'md' => 1,
+                                'lg' => 2,
+                                'xl' => 4,
+                            ])
+                                ->schema([
+
+                                    TextInput::make('nisn')
+                                        ->numeric()
+                                        ->columnSpan(1)
+                                        ->placeholder('Masukan No NISN sekolah mu')
+                                        ->label('NISN')
+                                        ->prefixIcon('heroicon-o-credit-card')
+                                        ->prefixIconColor('primary'),
+                                    TextInput::make('no_ktp')
+                                        ->numeric()
+                                        ->columnSpan(1)
+                                        ->placeholder('Masukan No NIK KTP')
+                                        ->label('NIK')
+                                        ->prefixIcon('heroicon-o-credit-card')
+                                        ->prefixIconColor('primary'),
+
+
+                                    DatePicker::make('date_of_birth')
+                                        ->date()
+                                        ->placeholder('Enter your birth date')
+                                        ->native(false)
+                                        ->prefixIcon('heroicon-o-cake')
+                                        ->prefixIconColor('primary'),
+                                    Select::make('role')
+                                        ->placeholder('Pilih role kamu')
+                                        ->options([
+                                            'Admin' => 'Admin',
+                                            'Santri' => 'Santri',
+                                            'Mentor' => 'Mentor',
+                                            'Leader' => 'Leader',
+                                        ])
+                                        ->prefixIcon('heroicon-o-tag')
+                                        ->prefixIconColor('primary'),
+
+                                ]),
+
+                            Grid::make([
+                                'md' => 1,
+                                'lg' => 2,
+                                'xl' => 4,
+                            ])
+                                ->schema([
+                                    TextInput::make('generation')
+                                        ->numeric()
+                                        ->placeholder('Which generation are you in?')
+                                        ->prefixIcon('heroicon-o-academic-cap')
+                                        ->prefixIconColor('primary'),
+
+                                    KelasIdSelect::make('kelas_id'),
+                                    DepartmentIdSelect::make('department_id'),
+                                    ProgramStageIdSelect::make('program_stage_id'),
+
+                                ]),
+
+                            Grid::make([
+                                'md' => 1,
+                                'lg' => 2,
+                                'xl' => 4,
+                            ])
+                                ->schema([
+                                    Select::make('status_graduate')
+                                        ->native(false)
+                                        ->options([
+                                            'Lulus' => 'Lulus',
+                                            'Belum Lulus' => 'Belum Lulus',
+                                            'Dropout' => 'Dropout',
+
+                                        ])
+                                        ->prefixIcon('heroicon-o-academic-cap')
+                                        ->prefixIconColor('primary'),
+
+                                    DatePicker::make('entry_date')
+                                        ->label('Tanggal awal masuk pondok')
+                                        ->native(false)
+                                        ->prefixIcon('heroicon-o-calendar-date-range')
+                                        ->prefixIconColor('primary'),
+
+
+                                    DatePicker::make('graduate_date')
+                                        ->native(false)
+                                        ->label('Tanggal akihr keluar pondok')
+                                        ->prefixIcon('heroicon-o-calendar-days')
+                                        ->prefixIconColor('primary'),
+                                    Textarea::make('address')
+                                        ->columnSpan(3),
+
+                                ]),
                         ]),
-                        TextInput::make('name')
-                            ->placeholder('Enter your Name')
-                            ->prefixIcon('heroicon-o-user')
-                            ->prefixIconColor('primary'),
-                        TextInput::make('email')
-                            ->email()
-                            ->prefixIcon('heroicon-o-envelope')
-                            ->prefixIconColor('primary'),
-                        TextInput::make('password')
-                            ->password()
-                            ->prefixIcon('heroicon-o-lock-closed')
-                            ->prefixIconColor('primary'),
-                        TextInput::make('phone')
-                            ->tel()
-                            ->prefixIcon('heroicon-o-phone')
-                            ->prefixIconColor('primary'),
-                    ]),
-
-                Grid::make([
-                    'md' => 1,
-                    'lg' => 2,
-                    'xl' => 4,
+                    Wizard\Step::make('Data Ortu Santri')
+                        ->icon('heroicon-o-clipboard-document-list')
+                        ->completedIcon('heroicon-m-clipboard-document-check')
+                        ->columns(4)
+                        ->schema([
+                            //////
+                        ]),
                 ])
-                    ->schema([
+                    ->skippable()
+                    ->columnSpanFull()
+                    ->contained(false),
 
-                            TextInput::make('nisn')
-                                ->numeric()
-                                ->columnSpan(1)
-                                ->placeholder('Masukan No NISN sekolah mu')
-                                ->label('NISN')
-                                ->prefixIcon('heroicon-o-credit-card')
-                                ->prefixIconColor('primary'),
-                            TextInput::make('no_ktp')
-                                ->numeric()
-                                ->columnSpan(1)
-                                ->placeholder('Masukan No NIK KTP')
-                                ->label('NIK')
-                                ->prefixIcon('heroicon-o-credit-card')
-                                ->prefixIconColor('primary'),
-
-
-                        DatePicker::make('date_of_birth')
-                            ->date()
-                            ->placeholder('Enter your birth date')
-                            ->native(false)
-                            ->prefixIcon('heroicon-o-cake')
-                            ->prefixIconColor('primary'),
-                        Select::make('role')
-                            ->placeholder('Pilih role kamu')
-                            ->options([
-                                'Admin' => 'Admin',
-                                'Santri' => 'Santri',
-                                'Mentor' => 'Mentor',
-                                'Leader' => 'Leader',
-                            ])
-                            ->prefixIcon('heroicon-o-tag')
-                            ->prefixIconColor('primary'),
-
-                    ]),
-
-                Grid::make([
-                    'md' => 1,
-                    'lg' => 2,
-                    'xl' => 4,
-                ])
-                    ->schema([
-                        TextInput::make('generation')
-                        ->numeric()
-                        ->prefixIcon('heroicon-o-academic-cap')
-                        ->prefixIconColor('primary'),
-
-                        KelasIdSelect::make('kelas_id'),
-                        DepartmentIdSelect ::make('department_id') ,
-                        ProgramStageIdSelect::make('program_stage_id')
-                            ,
-
-                    ]),
-
-                Grid::make([
-                    'md' => 1,
-                    'lg' => 2,
-                    'xl' => 4,
-                ])
-                    ->schema([
-                        Select::make('status_graduate')
-                        ->native(false)
-                            ->options([
-                                'Lulus' => 'Lulus',
-                                'Belum Lulus' => 'Belum Lulus',
-                                'Dropout' => 'Dropout',
-
-                            ])
-                            ->prefixIcon('heroicon-o-academic-cap')
-                            ->prefixIconColor('primary'),
-
-                        DatePicker::make('entry_date')
-                            ->native(false)
-                            ->prefixIcon('heroicon-o-calendar-date-range')
-                            ->prefixIconColor('primary'),
-
-
-                        DatePicker::make('graduate_date')
-                            ->native(false)
-                            ->prefixIcon('heroicon-o-calendar-days')
-                            ->prefixIconColor('primary'),
-                        Textarea::make('address')
-                            ->columnSpan(3),
-
-                    ]),
 
             ]);
     }
