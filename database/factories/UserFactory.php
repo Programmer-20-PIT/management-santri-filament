@@ -41,18 +41,18 @@ class UserFactory extends Factory
             'remember_token' => Str::random(20),
             'no_ktp' => Str::random(20),
             'nisn' => Str::random(20),
-            'gender' => fake()->randomElement(['male', 'female']),
+            'gender' => fake()->randomElement(['Pria', 'Wanita']),
             'date_of_birth' => fake()->date(),
             'phone' => fake()->phoneNumber(),
             'address' => fake()->address(),
             'generation' => fake()->numberBetween(1, 10),
             'entry_date' => $entryDate,
             'graduate_date' => fake()->dateTimeBetween($entryDate, date('Y-m-d', strtotime($entryDate . ' +' . fake()->numberBetween(2, 10) . ' years'))),
-            'status_graduate' => fake()->randomElement(['graduated', 'not_graduated']),
+            'status_graduate' => fake()->randomElement(['LULUS', 'ON PROGRESS', 'TIDAK LULUS','DROPOUT','KELUAR']),
             // 'kelas_id' => Kelas::factory(),
             // 'department_id' => Departement::all()->random()->id,
             // 'program_stage_id' => ProgramStage::all()->random()->id,
-            'role' => fake()->randomElement(['admin', 'teacher', 'student'])
+            'role' => fake()->randomElement(['ADMIN', 'SANTRI', 'MENTOR','LEADER','USTADZ']),
         ];
     }
 

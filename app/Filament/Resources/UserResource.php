@@ -172,7 +172,7 @@ class UserResource extends Resource
                                             KelasIdSelect::make('kelas_id'),
 
                                             DepartmentIdSelect::make('department_id'),
-                                            
+
                                             ProgramStageIdSelect::make('program_stage_id'),
 
                                         ]),
@@ -333,6 +333,7 @@ class UserResource extends Resource
                     }),
                 TextColumn::make('role')
                     ->badge()
+                    ->icon('heroicon-o-shield-check')
                     ->color(function ($record) {
                         $role = $record->role;
                         if ($role == 'admin') {
@@ -402,6 +403,11 @@ class UserResource extends Resource
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query->orderBy('generation', $direction);
                     }),
+                TextColumn::make('status_graduate')
+                    ->searchable()
+                    ->label("Status Kelulusan")
+                    ->icon('heroicon-o-academic-cap')
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->date('Y-m-d')
                     ->sortable()
@@ -426,9 +432,11 @@ class UserResource extends Resource
                 SelectFilter::make('role')
                     ->label("Role")
                     ->options([
-                        'admin' => 'admin',
-                        'teacher' => 'teacher',
-                        'student' => 'student',
+                        'ADMIN' => 'ADMIN',
+                        'SANTRI' => 'SANTRI',
+                        'MENTOR' => 'MENTOR',
+                        'LEADER' => 'LEADER',
+                        'USTADZ' => 'USTADZ',
                     ]),
                 SelectFilter::make('department_id')
                     ->label("Department")

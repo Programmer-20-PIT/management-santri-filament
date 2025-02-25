@@ -14,7 +14,7 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            Actions\CreateAction::make() 
                 ->label('Tambah Santri')
                 ->color('primary')
                 ->icon('heroicon-o-user-plus'),
@@ -24,10 +24,12 @@ class ListUsers extends ListRecords
     public function getTabs(): array
     {
         return [
-            'Admin' => Tab::make()->query(fn($query) => $query->where('role', 'admin')),
-            'Santri' => Tab::make()->query(fn($query) => $query->where('role', 'student')),
-            'Mentor' => Tab::make()->query(fn($query) => $query->where('role', 'teacher')),
-            'Leader' => Tab::make()->query(fn($query) => $query->where('role', 'leader')),
+            'Admin' => Tab::make()->query(fn($query) => $query->where('role', 'ADMIN')),
+            'Santri' => Tab::make()->query(fn($query) => $query->where('role', 'SANTRI')),
+            'Mentor' => Tab::make()->query(fn($query) => $query->where('role', 'MENTOR')),
+            'Leader' => Tab::make()->query(fn($query) => $query->where('role', 'LEADER')),
+            'Ustadz' => Tab::make()->query(fn($query) => $query->where('role', 'USTADZ')),
+            'All' => Tab::make(),
         ];
     }
 }
